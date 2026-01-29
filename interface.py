@@ -5,13 +5,14 @@ import random
 
 pygame.init()
 
-#parâmetros
 width=750
 height=750
 floor_x=0
 game_active= False
 is_game_over= False
 game_speed= 2
+score=0
+
 game_font = pygame.font.Font(None, 40)
 
 #palete de cores
@@ -77,6 +78,11 @@ class tube:
             return True
         return False
 
+    def count_pont(self): #contador de pontuação
+        if self.x1+self.espessura==300: #se o quadrado passar pelo tubo sem bater
+            return True
+        return False
+
 def floor():
     global floor_x
 
@@ -130,7 +136,8 @@ while True:
                 new_bird.rect.center = (300, 300) #reseta posição
                 new_bird.y = 300
                 new_bird.vel = 0
-            
+                score=0
+
             if event.key == pygame.K_SPACE:
                 if game_active:
                     new_bird.jump()
@@ -150,13 +157,16 @@ while True:
 
             if cur_tube.check() and len(tubes_list):
                 tubes_list.remove(cur_tube)
+            
+            if cur_tube.count_pont():
+                score+=1
     
     else:
         pygame.draw.rect(screen, (255, 100, 0), new_bird.rect)
         msg_surface = game_font.render("Press 'S' to start", True, (255, 255, 255)) #mensagem com indicação para inicial o jogo
         msg_rect = msg_surface.get_rect(center=(width/2, height/2))
         screen.blit(msg_surface, msg_rect)
-        if is_game_over: game_over(10)
+        if is_game_over: game_over(score)
 
     floor()
 
@@ -167,4 +177,3 @@ while True:
 
 pygame.quit()
 sys.exit()
-
