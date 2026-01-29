@@ -5,13 +5,13 @@ import random
 
 pygame.init()
 
+#parâmetros
 width=750
 height=750
 floor_x=0
 game_active= False
 is_game_over= False
 game_speed= 2
-
 game_font = pygame.font.Font(None, 40)
 
 #palete de cores
@@ -167,3 +167,4 @@ while True:
 
 pygame.quit()
 sys.exit()
+
