@@ -3,8 +3,11 @@ import sys
 import numpy as np
 import random
 
+from bird import bird
+
 pygame.init()
 
+# Screen settings
 width=750
 height=750
 floor_x=0
@@ -15,7 +18,7 @@ score=0
 
 game_font = pygame.font.Font(None, 40)
 
-#palete de cores
+# Color palette
 blue= (40, 116, 178)
 green= (0, 180, 0)
 dark_green = (0, 130, 0)
@@ -24,26 +27,11 @@ brown=  (120, 64, 8)
 dark_brown = (120, 64, 8)
 purple= (159, 95, 159)
 
+# Screen init
 screen= pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy gay")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
-class bird:
-    def __init__(self, x, y):
-        self.x=x
-        self.y=y
-        self.vel= 0
-        self.rect = pygame.Rect(x, y, 30, 30)
-    
-    def jump(self):
-        self.vel=-6 #7 é a intensidade do salto
-    
-    def move(self):
-        self.vel+= 0.25 #0.25 é a intensidade da descida
-        self.y += self.vel
-        self.rect.y = int(self.y)
-        pygame.draw.rect(screen, (255, 100, 0), self.rect)
-       
 class tube:
     def __init__(self, size):
         self.x1= width
@@ -117,7 +105,7 @@ def game_over(score):
     msg_surface = pygame.font.SysFont(None, 35).render("Press 'R' to restart" , True, (0,0,0)) 
     screen.blit(msg_surface, msg_surface.get_rect(center=(width/2, height/2+60))) #como fazer restart
 
-new_bird= bird(300,300)
+new_bird= bird(300,300,screen)
 tubes_list=[] #lista de tubos com tamanhos aleatórios
 
 pygame.time.set_timer(pygame.USEREVENT, 1850) #frequencia com que cria tubos (3s)
