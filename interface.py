@@ -3,29 +3,12 @@ import sys
 import numpy as np
 import random
 
+from globals import *
 from bird import bird
 
 pygame.init()
-
-# Screen settings
-width=750
-height=750
-floor_x=0
-game_active= False
-is_game_over= False
-game_speed= 2
-score=0
-
+# Game font
 game_font = pygame.font.Font(None, 40)
-
-# Color palette
-blue= (40, 116, 178)
-green= (0, 180, 0)
-dark_green = (0, 130, 0)
-light_green = (100, 200, 100)
-brown=  (120, 64, 8)
-dark_brown = (120, 64, 8)
-purple= (159, 95, 159)
 
 # Screen init
 screen= pygame.display.set_mode((width, height))
