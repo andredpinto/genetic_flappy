@@ -51,6 +51,7 @@ class tube:
         pygame.draw.rect(self.screen, (0,0,0), self.rect2, 2) #contorno
 
     def check(self):
+        # Checks if tube is out of screen
         if self.x+100 < 0:
             return True
         return False
