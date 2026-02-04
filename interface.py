@@ -34,40 +34,40 @@ pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
 class tube:
     def __init__(self, size):
-        self.x1= width
+        # size defines the size of the top tube
+        # the bigger the size value, the lower the opening between the tubes will be
+        self.x= width
         self.y1= -2
-        self.x2= width
         self.y2= size+170
         self.size=size
         self.espessura=80
         self.vel= game_speed #velocidade inicial do tubo
-        self.rect1 = pygame.Rect(self.x1, self.y1, self.espessura, size) #largura e altura do tubo superior
-        self.rect2 = pygame.Rect(self.x2, self.y2, self.espessura, height-size-170) #tamanho do tubo inferior
+        self.rect1 = pygame.Rect(self.x, self.y1, self.espessura, size) #largura e altura do tubo superior
+        self.rect2 = pygame.Rect(self.x, self.y2, self.espessura, height-size-170) #tamanho do tubo inferior
     
     def move(self):
         #self.vel+= 0.005 #velocidade com que se move
-        self.x1 -= self.vel
-        self.x2 -= self.vel
-        self.rect1.x = int(self.x1)
-        self.rect2.x = int(self.x2)
+        self.x -= self.vel
+        self.rect1.x = int(self.x)
+        self.rect2.x = int(self.x)
         
         #desenho do tubo superior
         pygame.draw.rect(screen, green, self.rect1) 
-        pygame.draw.rect(screen, dark_green, (self.x1, 0, 10, self.size-2)) #sombra lateral
+        pygame.draw.rect(screen, dark_green, (self.x, 0, 10, self.size-2)) #sombra lateral
         pygame.draw.rect(screen, (0,0,0), self.rect1, 2) #contorno
         
         #desenho do tubo inferior
         pygame.draw.rect(screen, green , self.rect2) 
-        pygame.draw.rect(screen, dark_green, (self.x2, self.y2, 10, height)) #sombra lateral
+        pygame.draw.rect(screen, dark_green, (self.x, self.y2, 10, height)) #sombra lateral
         pygame.draw.rect(screen, (0,0,0), self.rect2, 2) #contorno
 
     def check(self):
-        if self.x1+100 < 0:
+        if self.x+100 < 0:
             return True
         return False
 
     def count_pont(self): #contador de pontuação
-        if self.x1+self.espessura==300: #se o quadrado passar pelo tubo sem bater
+        if self.x+self.espessura==300: #se o quadrado passar pelo tubo sem bater
             return True
         return False
 
