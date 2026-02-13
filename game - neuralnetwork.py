@@ -4,8 +4,8 @@ import numpy as np
 import random
 import time
 
-from globalsNN import *
-from assetsNN import *
+from globals import *
+from assets import *
 
 pygame.init()
 # Game font

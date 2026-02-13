@@ -1,14 +1,16 @@
-from globalsNN import *
+from globals import *
 import pygame
 
 class bird:
-    def __init__(self, x, y, screen, number):
+    def __init__(self, x, y, screen, number=None):
         self.x=x
         self.y=y
         self.screen=screen
         self.vel= 0
         self.rect = pygame.Rect(x, y, 30, 30)
-        self.msg_surface = pygame.font.SysFont(None, 35).render(str(number) , True, (0,0,0))    # Escrever um número para identificar cada quadrado
+        self.number = number
+        if number:
+            self.msg_surface = pygame.font.SysFont(None, 35).render(str(number) , True, (0,0,0))    # Escrever um número para identificar cada quadrado
         self.score=0 # pontuação de cada pássaro
         self.alive= True
     
@@ -21,7 +23,8 @@ class bird:
         self.y += self.vel
         self.rect.y = int(self.y)
         pygame.draw.rect(self.screen, (255, 100, 0), self.rect)
-        self.screen.blit(self.msg_surface, self.msg_surface.get_rect(center=(self.x+1, self.y+12)))
+        if self.number:
+            self.screen.blit(self.msg_surface, self.msg_surface.get_rect(center=(self.x+1, self.y+12)))
 
 
 class tube:
