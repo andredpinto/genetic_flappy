@@ -35,7 +35,7 @@ class Layer:
 
 # This is an implementation of a simple neural network for our specific use case
 # with N inputs and 1 output, with a single hidden layer with variable size
-# (Basically a classifier with N outputs)
+# (Basically a classifier with N inputs)
 class NeuralNetwork:
     def __init__(self, input_size, hidden_layer_size=5):
         self.hidden_layer_size = hidden_layer_size
@@ -43,7 +43,7 @@ class NeuralNetwork:
         self.output_layer = Layer(hidden_layer_size, 1, sigmoid)
 
     def think(self, input : np.ndarray):
-        # Outputs 0 or 1 (jump or not jump) based on the input
+        # Outputs a number between 0 and 1, based on the input (sigmoid activation function)
         return self.output_layer.forwardPass(self.hidden_layer.forwardPass(input))
     
     def getDNA(self):
@@ -72,10 +72,10 @@ class NeuralNetwork:
         # This implementation is fine for our use-case, with only one hidden layer.
         # However, if you wish to upgrade this network implementation, with more hidden layers,
         # you should add a "layer_list" attribute to the Network object
-        # This function should then be refactored to use a cycle instead of manually slicing the input array
+        # This method should then be refactored to use a cycle instead of manually slicing the input array
 
 
 # Debugging
 if __name__ == "__main__":
     myNetwork = NeuralNetwork(3)
-    print(myNetwork.think(np.array([[10],[30],[20]])))
+    print(myNetwork.getDNA())

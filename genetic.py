@@ -18,6 +18,10 @@ def mutate(dna : np.ndarray, rate=0.1):
 
     return dna
 
+def crossover(a : np.ndarray, b : np.ndarray):
+    pass
+
+
 
 if __name__ == "__main__":
     dna = rng.normal(size=10)
