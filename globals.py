@@ -6,6 +6,7 @@ score=0
 # Screen settings
 width=750
 height=750
+floor_y = 670   # The higher the value, the lower the ground is
 floor_x=0
 
 # Game Settings

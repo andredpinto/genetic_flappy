@@ -69,6 +69,11 @@ while True:
 
     floor(screen)
 
+    # ====== DEBUGGING ====== 
+    #if len(tubes_list) > 0 and game_active:
+    #    log_dist(new_bird, tubes_list[0])
+    # =======================
+
     pygame.display.flip()
     pygame.time.Clock().tick(60)
 
