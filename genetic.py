@@ -2,7 +2,7 @@
 
 import numpy as np
 
-rng = np.random.default_rng()
+rng = np.random.default_rng()   # Use a seed for reproducible results
 
 def mutate(dna : np.ndarray, rate=0.1):
     n_indices = round(dna.size*rate)
@@ -19,11 +19,25 @@ def mutate(dna : np.ndarray, rate=0.1):
     return dna
 
 def crossover(a : np.ndarray, b : np.ndarray):
-    pass
+    # This is only a possible implementation of a crossover function (Uniform Crossover)
+    # For more options, look into Single-Point Crossover and Arithmetic Crossover
+
+    # Gets two neural network's DNA and returns one that is a (random) combination of both
+    assert a.size == b.size
+
+    mask = rng.random(a.size) > 0.5
+    # This is an array of booleans
+    # rng.random creates an array of n values in the interval (0,1(
+
+    offspring = np.where(mask, a, b)
+    # I think you can figure out what np.where does
+
+    return offspring
 
 
 
 if __name__ == "__main__":
-    dna = rng.normal(size=10)
-    print(dna)
-    print(mutate(dna, 0.5))
+    dna1 = np.array([1,2,3,4,5,6,7])
+    dna2 = np.array([8,9,10,11,12,13,14])
+
+    print(crossover(dna1, dna2))

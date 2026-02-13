@@ -1,5 +1,7 @@
 import numpy as np
 
+rng = np.random.default_rng()   # Use a seed for reproducible results
+
 # Activation functions and their vectorized versions
 
 def ReLU(x):
@@ -18,8 +20,8 @@ def sigmoid(x):
 class Layer:
     def __init__(self, input_size, size, activation):
         # The initial values for the matrixes are random
-        self.weights = np.random.randn(size, input_size)
-        self.biases = np.random.randn(size,1)
+        self.weights = rng.normal(size=(size, input_size))
+        self.biases = rng.normal(size=(size,1))
         self.activation = activation
 
     def forwardPass(self, input : np.ndarray) -> np.ndarray:
