@@ -2,12 +2,17 @@ from globals import *
 import pygame
 
 class bird:
-    def __init__(self, x, y, screen):
+    def __init__(self, x, y, screen, number=None):
         self.x=x
         self.y=y
         self.screen=screen
         self.vel= 0
         self.rect = pygame.Rect(x, y, 30, 30)
+        self.number = number
+        if number:
+            self.msg_surface = pygame.font.SysFont(None, 35).render(str(number) , True, (0,0,0))    # Escrever um número para identificar cada quadrado
+        self.score=0 # pontuação de cada pássaro
+        self.alive= True
     
     def jump(self):
         self.vel=-6 # intensity of the jump
@@ -18,6 +23,8 @@ class bird:
         self.y += self.vel
         self.rect.y = int(self.y)
         pygame.draw.rect(self.screen, (255, 100, 0), self.rect)
+        if self.number:
+            self.screen.blit(self.msg_surface, self.msg_surface.get_rect(center=(self.x+1, self.y+12)))
 
 
 class tube:
@@ -66,7 +73,7 @@ def floor(screen):
     global floor_x
 
     #desenho da terra
-    pygame.draw.rect(screen, brown , pygame.Rect(0, floor_y, 750, 80))
+    pygame.draw.rect(screen, brown , pygame.Rect(0, 670, 750, 80))
     #pygame.draw.line(screen, (0,0,0), (0, 670), (750, 670), 2)
     
     #desenho da relva
@@ -79,11 +86,11 @@ def floor(screen):
     for i in range(0, width + 50, 40): 
         pos_x = i + floor_x
         
-        pygame.draw.rect(screen, light_green, (pos_x, floor_y, 40, 15)) #verde claro da relva
-        pygame.draw.rect(screen, dark_green, (pos_x + 20, floor_y, 20, 15))  #verde escuro da relva
+        pygame.draw.rect(screen, light_green, (pos_x, 670, 40, 15)) #verde claro da relva
+        pygame.draw.rect(screen, dark_green, (pos_x + 20, 670, 20, 15))  #verde escuro da relva
         pygame.draw.line(screen, (0,0,0), (pos_x, 685), (pos_x+40, 685), 2)#linha preta
     
-    pygame.draw.line(screen, (0,0,0), (0, floor_y), (width, floor_y), 3) #linha preta no topo do chão
+    pygame.draw.line(screen, (0,0,0), (0, 670), (width, 670), 3) #linha preta no topo do chão
 
 
 def game_over(score, screen):
@@ -96,33 +103,3 @@ def game_over(score, screen):
     screen.blit(msg_surface, msg_surface.get_rect(center=(width/2, height/2-5))) #escrever a pontuação
     msg_surface = pygame.font.SysFont(None, 35).render("Press 'R' to restart" , True, (0,0,0)) 
     screen.blit(msg_surface, msg_surface.get_rect(center=(width/2, height/2+60))) #como fazer restart
-
-
-
-# Some auxiliar functions for the neural network
-
-def norm_dist(a, b, n):
-    # Returns difference (distance) from a to b, normalized with the n value, for input for the Neural Network
-    return (b-a)/n
-
-def tube_vert_dist(bird : bird, tube : tube):
-    return norm_dist(bird.y, tube.y2, height)
-
-def tube_horiz_dist(bird : bird, tube : tube):
-    return norm_dist(bird.x, tube.x, width)
-
-def floor_dist(bird : bird):
-    return norm_dist(bird.y, floor_y, height)
-
-def norm_speed(bird : bird):
-    # Normalized bird speed, max speed empirically verified, may change
-    max_bird_speed = 18.
-    return bird.vel / max_bird_speed
-
-def log_dist(bird : bird, tube : tube):
-    # For debugging purposes
-    print("Vertical distance to tube", tube_vert_dist(bird, tube))
-    print("Horizontal distance to tube", tube_horiz_dist(bird, tube))
-    print("Distance to floor", floor_dist(bird))
-    print("Relative bird speed", norm_speed(bird))
-    print("============================")

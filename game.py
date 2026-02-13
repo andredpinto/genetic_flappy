@@ -16,7 +16,7 @@ pygame.display.set_caption("Flappy gay")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
 
-new_bird= bird(300,300,screen)
+new_bird= bird(300,300,screen, 10)
 tubes_list=[] #lista de tubos com tamanhos aleatórios
 
 pygame.time.set_timer(pygame.USEREVENT, tube_frequency) #frequencia com que cria tubos (3s)
