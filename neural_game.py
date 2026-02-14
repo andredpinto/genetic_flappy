@@ -2,7 +2,7 @@ import pygame
 import sys
 import numpy as np
 import random
-import time
+from collections import deque
 
 from globals import *
 from assets import *
@@ -16,18 +16,21 @@ screen= pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy gay")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
+bird_stamp = 1     # Bird counter
 
-bird_lst=[] # Lista com todos os pássaros que vão jogar ao mesmo tempo
+# This dictionary will associate the "smart" birds (bird class and corresponding neural network)
+# With their scores (frames they were alive), starting at 0
+birds_fitness = {}
 for i in range(1,bird_number+1):
-    bird_lst.append(bird(300,300,screen, i))
+    birds_fitness[smartBird(bird_x, 300, screen, number=bird_stamp, input_size=4)] = 0
+    bird_stamp += 1
+
+bird_lst = birds_fitness.keys()
 
 tubes_list=[] #lista de tubos com tamanhos aleatórios
+tube_queue = deque()
 
 pygame.time.set_timer(pygame.USEREVENT, tube_frequency) #frequencia com que cria tubos (3s)
-
-step = 0
-delay = 400  # ms
-next_time = pygame.time.get_ticks() + delay
 
 while True:
     for event in pygame.event.get():
@@ -35,42 +38,37 @@ while True:
             pygame.quit()
             sys.exit()
 
+        # Key press handling
         if event.type == pygame.KEYDOWN:
+            # Game reset
             if event.key == pygame.K_s or event.key == pygame.K_r:
                 game_active = True
-                false_num=0
-                best_score=0
+                dead_birds=0
                 tubes_list=[] #reseta a lista
+                tube_queue.clear()
 
                 for b in bird_lst:
                     b.jump() #dá um salto inicial
-                    b.rect.center = (300, 300) #reseta posição
+                    b.rect.center = (bird_x, 300) #reseta posição
                     b.y = 300
                     b.vel = 0
                     b.alive = True
                     b.score = 0
                     step = 0
-                    next_time = pygame.time.get_ticks() + delay
         
+        # Tube logic
         if event.type == pygame.USEREVENT and game_active:
-            tubes_list.append(tube(random.randrange(100, 501, 20), screen)) #colocar na lista um novo tubo a cada 3s
+            new_tube = tube(random.randrange(100, 501, 20), screen)
+            tubes_list.append(new_tube) #colocar na lista um novo tubo a cada 3s
+            tube_queue.append(new_tube)
     
-    current_time = pygame.time.get_ticks()
 
-    if game_active and step < len(movimento) and current_time >= next_time:
+    screen.fill(blue)   # Background
 
-        # Aplica salto a todos os 1's da linha
-        for j, val in enumerate(movimento[step]):
-            if val == 1:
-                bird_lst[j].jump()  # salto aplicado imediatamente
-            print (val)
-        step += 1
-        next_time += delay  # espera 0.5s para a próxima linha
-
-    screen.fill(blue)
     if game_active:
         for b in bird_lst:
             if not b.alive: continue
+            birds_fitness[b] += 1
 
             b.move()
 
@@ -81,12 +79,12 @@ while True:
                 if not b.alive: continue
                 if b.rect.colliderect(cur_tube.rect1) or b.rect.colliderect(cur_tube.rect2) or b.y<0 or b.y+30>668:
                     b.alive= False
-                    false_num+=1 # Incremento o núnero de pássaros que morreram
+                    dead_birds+=1 # Incremento o núnero de pássaros que morreram
                    
                     if b.score>best_score:
                         best_score=b.score # Verifico se conseguiram a melhor pontuação até agora (corresponde ao ultimo pássaro a morer)
 
-                    if false_num==bird_number:    # Verificar se todos os pássaros já morreram
+                    if dead_birds==bird_number:    # Verificar se todos os pássaros já morreram
                         game_active= False
                         is_game_over= True
 

@@ -7,6 +7,7 @@ width=750
 height=750
 floor_y=670
 floor_x=0
+bird_x = 300
 
 # Game Settings
 game_speed= 2
@@ -22,6 +23,7 @@ dark_brown = (120, 64, 8)
 purple= (159, 95, 159)
 
 
+input_number = 4    # Number of inputs for neural network
 bird_number=3 # Número de pássaros com que o teste é realizado
 false_num=0 # Número de pássaros mortos
 best_score=0 # Pontuação do melhor pássaro

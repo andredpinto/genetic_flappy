@@ -1,7 +1,8 @@
 from globals import *
 import pygame
+from neural_network import *
 
-class bird:
+class Bird:
     def __init__(self, x, y, screen, number=None):
         self.x=x
         self.y=y
@@ -25,6 +26,13 @@ class bird:
         pygame.draw.rect(self.screen, (255, 100, 0), self.rect)
         if self.number:
             self.screen.blit(self.msg_surface, self.msg_surface.get_rect(center=(self.x+1, self.y+12)))
+
+
+class smartBird(Bird, NeuralNetwork):
+    # This class joins the Bird and NeuralNetwork classes, for convenience
+    def __init__(self, x, y, screen, number, input_size):
+        Bird.__init__(self, x, y, screen, number)
+        NeuralNetwork.__init__(self, input_size)
 
 
 class tube:
@@ -110,21 +118,21 @@ def norm_dist(a, b, n):
     # Returns difference (distance) from a to b, normalized with the n value, for input for the Neural Network
     return (b-a)/n
 
-def tube_vert_dist(bird : bird, tube : tube):
+def tube_vert_dist(bird : Bird, tube : tube):
     return norm_dist(bird.y, tube.y2, height)
 
-def tube_horiz_dist(bird : bird, tube : tube):
+def tube_horiz_dist(bird : Bird, tube : tube):
     return norm_dist(bird.x, tube.x, width)
 
-def floor_dist(bird : bird):
+def floor_dist(bird : Bird):
     return norm_dist(bird.y, floor_y, height)
 
-def norm_speed(bird : bird):
+def norm_speed(bird : Bird):
     # Normalized bird speed, max speed empirically verified, may change
     max_bird_speed = 18.
     return bird.vel / max_bird_speed
 
-def log_dist(bird : bird, tube : tube):
+def log_dist(bird : Bird, tube : tube):
     # For debugging purposes
     print("Vertical distance to tube", tube_vert_dist(bird, tube))
     print("Horizontal distance to tube", tube_horiz_dist(bird, tube))
