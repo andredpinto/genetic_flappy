@@ -35,9 +35,22 @@ def crossover(a : np.ndarray, b : np.ndarray):
     return offspring
 
 
+def generate(bird_list : list, n_offspring : int) -> list:
+    # Takes a list of 'parent' birds and creates a list of birds to use for the next generation
+    offsp_list = [bird for bird in bird_list]   # Add parents to next generation
+
+    for i in range(n_offspring):
+        parents = rng.integers(low=0, high=len(bird_list), size=2)
+        offsp_list.append(mutate(crossover(bird_list[parents[0]], bird_list[parents[1]])))
+
+    return offsp_list
+
 
 if __name__ == "__main__":
-    dna1 = np.array([1,2,3,4,5,6,7])
-    dna2 = np.array([8,9,10,11,12,13,14])
+    dna1 = rng.normal(size=10)
+    print("dna1 = ", dna1)
+    dna2 = rng.normal(size=10)
+    print("dna2 = ", dna2)
+    print('=========================')
 
-    print(crossover(dna1, dna2))
+    print(generate([dna1, dna2], 6))
