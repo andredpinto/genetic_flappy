@@ -5,6 +5,7 @@ is_game_over= False
 # Screen settings
 width=750
 height=750
+floor_y=670
 floor_x=0
 
 # Game Settings
