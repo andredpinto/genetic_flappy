@@ -2,6 +2,9 @@
 
 import numpy as np
 
+from assets import smartBird
+from globals import *
+
 rng = np.random.default_rng()   # Use a seed for reproducible results
 
 def mutate(dna : np.ndarray, rate=0.1):
@@ -36,14 +39,32 @@ def crossover(a : np.ndarray, b : np.ndarray):
 
 
 def generate(bird_list : list, n_offspring : int) -> list:
-    # Takes a list of 'parent' birds and creates a list of birds to use for the next generation
-    offsp_list = [bird for bird in bird_list]   # Add parents to next generation
+    # Takes a list of 'parent' birds (NOT actually birds, but their DNA) and creates a list of birds to use for the next generation
+    offsp_list = []
 
     for i in range(n_offspring):
         parents = rng.integers(low=0, high=len(bird_list), size=2)
         offsp_list.append(mutate(crossover(bird_list[parents[0]], bird_list[parents[1]])))
 
     return offsp_list
+
+
+def create_generation(bird_scores : dict, gen_size, screen, bird_stamp)->tuple:
+    # Receives bird scores dictionary {smartBird : score} and returns list of birds in new generation + bird stamp number
+        leaderboard = sorted(bird_scores.items(), key=lambda x: x[1], reverse=True)
+
+        new_gen = [b[0] for b in leaderboard[:elite_number]] # Add parents (elite) to next generation
+
+        elite = [b.getDNA() for b in new_gen]
+
+        for dna in generate(elite, gen_size-elite_number):
+             new_bird = smartBird(bird_x, 300, screen, bird_stamp, input_number)
+             bird_stamp += 1
+             new_bird.setDNA(dna)
+             new_gen.append(new_bird)
+
+        return new_gen, bird_stamp
+
 
 
 if __name__ == "__main__":

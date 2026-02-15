@@ -6,8 +6,10 @@ from collections import deque
 
 from globals import *
 from assets import *
+from genetic import *
 
 pygame.init()
+
 # Game font
 game_font = pygame.font.Font(None, 40)
 
@@ -16,21 +18,18 @@ screen= pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy gay")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
+# Bird init
 bird_stamp = 1     # Bird counter
-
 # This dictionary will associate the "smart" birds (bird class and corresponding neural network)
 # With their scores (frames they were alive), starting at 0
 birds_fitness = {}
-for i in range(bird_number):
-    birds_fitness[smartBird(bird_x, 300, screen, number=bird_stamp, input_size=4)] = 0
+for i in range(generation_size):
+    birds_fitness[smartBird(bird_x, 300, screen, number=bird_stamp, input_size=input_number)] = 0
     bird_stamp += 1
-
 bird_lst = birds_fitness.keys()
 
 tubes_list = deque()    # Tubes on screen
 active_tubes = deque()  # Tubes in front of the bird
-
-pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
 
 def reset():
     # Game reset
@@ -39,6 +38,7 @@ def reset():
     dead_birds=0
     tubes_list.clear()
     active_tubes.clear()
+    pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
 
     for b in bird_lst:
         b.jump()    # Initial jump
@@ -48,6 +48,8 @@ def reset():
         b.alive = True
         b.score = 0
         step = 0
+
+pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
 
 # GAME LOOP
 while True:
@@ -63,11 +65,12 @@ while True:
                 reset()
         
         # Tube generation
-        if (event.type == pygame.USEREVENT) and game_active:
+        if event.type == pygame.USEREVENT and game_active:
             # Add tube after interval determined by tube_frequency variable (globals)
             new_tube = Tube(random.randrange(100, 501, 20), screen)
             tubes_list.append(new_tube)
             active_tubes.append(new_tube)
+
     
 
     screen.fill(blue)   # Background
@@ -87,6 +90,7 @@ while True:
         # ===== BIRD MOVEMENT ===== 
         for b in bird_lst:
             if not b.alive: continue
+
             birds_fitness[b] += 1
 
             # NEURAL NETWORK DECISION
@@ -100,7 +104,6 @@ while True:
             decision = b.think(sensors)
 
             if decision > 0.5: b.jump()
-
 
             b.move()
 
@@ -120,7 +123,7 @@ while True:
                     if b.score>best_score:
                         best_score=b.score # Verifico se conseguiram a melhor pontuação até agora (corresponde ao ultimo pássaro a morer)
 
-                    if dead_birds==bird_number:    # Verificar se todos os pássaros já morreram
+                    if dead_birds==generation_size:    # Verificar se todos os pássaros já morreram
                         game_active= False
                         is_game_over= True
 
@@ -140,7 +143,12 @@ while True:
         msg_surface = game_font.render("Press 'S' to start", True, (255, 255, 255)) #mensagem com indicação para iniciar o jogo
         msg_rect = msg_surface.get_rect(center=(width/2, height/2))
         screen.blit(msg_surface, msg_rect)
-        if is_game_over: game_over(best_score, screen)
+
+        # GENERATION PASS LOGIC
+        if is_game_over:
+            bird_lst, bird_stamp = create_generation(birds_fitness, generation_size, screen, bird_stamp)
+            birds_fitness = {b : 0 for b in bird_lst}   # Reset scores
+            reset()
 
     floor(screen)
 

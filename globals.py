@@ -1,6 +1,8 @@
 # Global 
 game_active= False
 is_game_over= False
+false_num=0 # Número de pássaros mortos
+best_score=0 # Pontuação do melhor pássaro
 
 # Screen settings
 width=750
@@ -11,7 +13,7 @@ bird_x = 300
 
 # Game Settings
 game_speed= 2
-tube_frequency = 1850 # aprox 3s
+tube_frequency = 1850   # milliseconds
 
 # Color palette
 blue= (40, 116, 178)
@@ -22,8 +24,8 @@ brown=  (120, 64, 8)
 dark_brown = (120, 64, 8)
 purple= (159, 95, 159)
 
-
+# Genetic algorithm and neural network options
 input_number = 4    # Number of inputs for neural network
-bird_number=1000 # Número de pássaros com que o teste é realizado
-false_num=0 # Número de pássaros mortos
-best_score=0 # Pontuação do melhor pássaro
+generation_size = 100
+elite_number = 10    # Birds that pass to the next generation
+assert elite_number < generation_size

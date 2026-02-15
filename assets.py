@@ -58,8 +58,8 @@ class Tube:
         self.rect1.x = int(self.x)
         self.rect2.x = int(self.x)
         
-        #desenho do tubo superior
         if not self.ghost:
+            #desenho do tubo superior
             pygame.draw.rect(self.screen, green, self.rect1) 
             pygame.draw.rect(self.screen, dark_green, (self.x, 0, 10, self.size-2)) #sombra lateral
             pygame.draw.rect(self.screen, (0,0,0), self.rect1, 2) #contorno
