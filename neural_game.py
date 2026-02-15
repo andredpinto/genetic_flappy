@@ -31,8 +31,25 @@ tubes_list = deque()    # Tubes on screen
 active_tubes = deque()  # Tubes in front of the bird
 
 pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
-game_start = True   # Used to create tube in the beginning of the game
 
+def reset():
+    # Game reset
+    global game_active, dead_birds, game_start, step
+    game_active = True
+    dead_birds=0
+    tubes_list.clear()
+    active_tubes.clear()
+
+    for b in bird_lst:
+        b.jump()    # Initial jump
+        b.rect.center = (bird_x, 300)   # Resets bird position
+        b.y = 300
+        b.vel = 0
+        b.alive = True
+        b.score = 0
+        step = 0
+
+# GAME LOOP
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -43,20 +60,7 @@ while True:
         if event.type == pygame.KEYDOWN:
             # Game reset
             if event.key == pygame.K_s or event.key == pygame.K_r:
-                game_active = True
-                dead_birds=0
-                tubes_list.clear()
-                active_tubes.clear()
-                game_start = True
-
-                for b in bird_lst:
-                    b.jump()    # Initial jump
-                    b.rect.center = (bird_x, 300)   # Resets bird position
-                    b.y = 300
-                    b.vel = 0
-                    b.alive = True
-                    b.score = 0
-                    step = 0
+                reset()
         
         # Tube generation
         if (event.type == pygame.USEREVENT) and game_active:
@@ -64,7 +68,6 @@ while True:
             new_tube = Tube(random.randrange(100, 501, 20), screen)
             tubes_list.append(new_tube)
             active_tubes.append(new_tube)
-            game_start = False
     
 
     screen.fill(blue)   # Background

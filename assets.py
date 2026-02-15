@@ -47,6 +47,7 @@ class Tube:
         self.espessura=80
         self.vel= game_speed #velocidade inicial do tubo
         # Ghost attribute makes tube not visible
+        self.ghost = ghost
         if not ghost:
             self.rect1 = pygame.Rect(self.x, self.y1, self.espessura, size) #largura e altura do tubo superior
             self.rect2 = pygame.Rect(self.x, self.y2, self.espessura, height-size-170) #tamanho do tubo inferior
@@ -58,14 +59,15 @@ class Tube:
         self.rect2.x = int(self.x)
         
         #desenho do tubo superior
-        pygame.draw.rect(self.screen, green, self.rect1) 
-        pygame.draw.rect(self.screen, dark_green, (self.x, 0, 10, self.size-2)) #sombra lateral
-        pygame.draw.rect(self.screen, (0,0,0), self.rect1, 2) #contorno
-        
-        #desenho do tubo inferior
-        pygame.draw.rect(self.screen, green , self.rect2) 
-        pygame.draw.rect(self.screen, dark_green, (self.x, self.y2, 10, height)) #sombra lateral
-        pygame.draw.rect(self.screen, (0,0,0), self.rect2, 2) #contorno
+        if not self.ghost:
+            pygame.draw.rect(self.screen, green, self.rect1) 
+            pygame.draw.rect(self.screen, dark_green, (self.x, 0, 10, self.size-2)) #sombra lateral
+            pygame.draw.rect(self.screen, (0,0,0), self.rect1, 2) #contorno
+            
+            #desenho do tubo inferior
+            pygame.draw.rect(self.screen, green , self.rect2) 
+            pygame.draw.rect(self.screen, dark_green, (self.x, self.y2, 10, height)) #sombra lateral
+            pygame.draw.rect(self.screen, (0,0,0), self.rect2, 2) #contorno
 
     def offscreen_check(self):
         # Checks if tube is out of screen
