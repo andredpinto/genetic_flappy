@@ -35,8 +35,8 @@ class smartBird(Bird, NeuralNetwork):
         NeuralNetwork.__init__(self, input_size)
 
 
-class tube:
-    def __init__(self, size, screen):
+class Tube:
+    def __init__(self, size, screen, ghost = False):
         # size defines the size of the top tube
         # the bigger the size value, the lower the opening between the tubes will be
         self.x= width
@@ -46,8 +46,10 @@ class tube:
         self.screen=screen
         self.espessura=80
         self.vel= game_speed #velocidade inicial do tubo
-        self.rect1 = pygame.Rect(self.x, self.y1, self.espessura, size) #largura e altura do tubo superior
-        self.rect2 = pygame.Rect(self.x, self.y2, self.espessura, height-size-170) #tamanho do tubo inferior
+        # Ghost attribute makes tube not visible
+        if not ghost:
+            self.rect1 = pygame.Rect(self.x, self.y1, self.espessura, size) #largura e altura do tubo superior
+            self.rect2 = pygame.Rect(self.x, self.y2, self.espessura, height-size-170) #tamanho do tubo inferior
     
     def move(self):
         #self.vel+= 0.005 #velocidade com que se move
@@ -65,16 +67,16 @@ class tube:
         pygame.draw.rect(self.screen, dark_green, (self.x, self.y2, 10, height)) #sombra lateral
         pygame.draw.rect(self.screen, (0,0,0), self.rect2, 2) #contorno
 
-    def check(self):
+    def offscreen_check(self):
         # Checks if tube is out of screen
-        if self.x+100 < 0:
-            return True
-        return False
+        return self.x+100 < 0
 
+    def inactive_check(self):
+        # Checks if tube is in front of bird
+        return self.x + self.espessura < bird_x
+        
     def count_pont(self): #contador de pontuação
-        if self.x+self.espessura==300: #se o quadrado passar pelo tubo sem bater
-            return True
-        return False
+        return self.x+self.espessura==300 #se o quadrado passar pelo tubo sem bater
 
 
 def floor(screen):
@@ -118,10 +120,10 @@ def norm_dist(a, b, n):
     # Returns difference (distance) from a to b, normalized with the n value, for input for the Neural Network
     return (b-a)/n
 
-def tube_vert_dist(bird : Bird, tube : tube):
+def tube_vert_dist(bird : Bird, tube : Tube):
     return norm_dist(bird.y, tube.y2, height)
 
-def tube_horiz_dist(bird : Bird, tube : tube):
+def tube_horiz_dist(bird : Bird, tube : Tube):
     return norm_dist(bird.x, tube.x, width)
 
 def floor_dist(bird : Bird):
@@ -132,7 +134,7 @@ def norm_speed(bird : Bird):
     max_bird_speed = 18.
     return bird.vel / max_bird_speed
 
-def log_dist(bird : Bird, tube : tube):
+def log_dist(bird : Bird, tube : Tube):
     # For debugging purposes
     print("Vertical distance to tube", tube_vert_dist(bird, tube))
     print("Horizontal distance to tube", tube_horiz_dist(bird, tube))

@@ -24,28 +24,6 @@ purple= (159, 95, 159)
 
 
 input_number = 4    # Number of inputs for neural network
-bird_number=3 # Número de pássaros com que o teste é realizado
+bird_number=1000 # Número de pássaros com que o teste é realizado
 false_num=0 # Número de pássaros mortos
 best_score=0 # Pontuação do melhor pássaro
-
-movimento= [
-    [1, 1, 1],
-    [0, 0, 0],
-    [1, 1, 0],
-    [0, 0, 1],
-    [1, 0, 1],
-    [1, 1, 0],
-    [0, 1, 1],
-    [0, 1, 1],
-    [1, 0, 0],
-    [0, 1, 0],
-    [1, 0, 1],
-    [0, 1, 1],
-    [0, 0, 1],
-    [1, 1, 0],
-    [1, 1, 1],
-    [0, 1, 1],
-    [1, 0, 1],
-    [1, 1, 0]
-]
-

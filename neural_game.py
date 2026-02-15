@@ -21,16 +21,17 @@ bird_stamp = 1     # Bird counter
 # This dictionary will associate the "smart" birds (bird class and corresponding neural network)
 # With their scores (frames they were alive), starting at 0
 birds_fitness = {}
-for i in range(1,bird_number+1):
+for i in range(bird_number):
     birds_fitness[smartBird(bird_x, 300, screen, number=bird_stamp, input_size=4)] = 0
     bird_stamp += 1
 
 bird_lst = birds_fitness.keys()
 
-tubes_list=[] #lista de tubos com tamanhos aleatórios
-tube_queue = deque()
+tubes_list = deque()    # Tubes on screen
+active_tubes = deque()  # Tubes in front of the bird
 
-pygame.time.set_timer(pygame.USEREVENT, tube_frequency) #frequencia com que cria tubos (3s)
+pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
+game_start = True   # Used to create tube in the beginning of the game
 
 while True:
     for event in pygame.event.get():
@@ -44,37 +45,69 @@ while True:
             if event.key == pygame.K_s or event.key == pygame.K_r:
                 game_active = True
                 dead_birds=0
-                tubes_list=[] #reseta a lista
-                tube_queue.clear()
+                tubes_list.clear()
+                active_tubes.clear()
+                game_start = True
 
                 for b in bird_lst:
-                    b.jump() #dá um salto inicial
-                    b.rect.center = (bird_x, 300) #reseta posição
+                    b.jump()    # Initial jump
+                    b.rect.center = (bird_x, 300)   # Resets bird position
                     b.y = 300
                     b.vel = 0
                     b.alive = True
                     b.score = 0
                     step = 0
         
-        # Tube logic
-        if event.type == pygame.USEREVENT and game_active:
-            new_tube = tube(random.randrange(100, 501, 20), screen)
-            tubes_list.append(new_tube) #colocar na lista um novo tubo a cada 3s
-            tube_queue.append(new_tube)
+        # Tube generation
+        if (event.type == pygame.USEREVENT) and game_active:
+            # Add tube after interval determined by tube_frequency variable (globals)
+            new_tube = Tube(random.randrange(100, 501, 20), screen)
+            tubes_list.append(new_tube)
+            active_tubes.append(new_tube)
+            game_start = False
     
 
     screen.fill(blue)   # Background
 
     if game_active:
+
+        # Remove not-active tubes
+        while len(active_tubes) and active_tubes[0].inactive_check():
+            active_tubes.popleft()
+
+        if len(active_tubes):
+            cur_tube = active_tubes[0]  # Set active tube (the one directly in front of the bird)
+        else:
+            cur_tube = Tube(height/2, screen, ghost=True)   # Temporary "ghost tube", roughly in the middle of the screen
+            # Needed for the start of the game, when no tubes are generated
+
+        # ===== BIRD MOVEMENT ===== 
         for b in bird_lst:
             if not b.alive: continue
             birds_fitness[b] += 1
 
+            # NEURAL NETWORK DECISION
+            sensors = np.array([
+                tube_vert_dist(b, cur_tube),
+                tube_horiz_dist(b, cur_tube),
+                floor_dist(b),
+                norm_speed(b)
+            ]).reshape((input_number,1))
+
+            decision = b.think(sensors)
+
+            if decision > 0.5: b.jump()
+
+
             b.move()
 
-        for cur_tube in tubes_list[:]:
-            cur_tube.move()
-          
+        # Move Tubes
+        for tube in tubes_list:
+            tube.move()
+
+        # Verify colision 
+        if len(tubes_list):
+            # For each bird
             for b in bird_lst:
                 if not b.alive: continue
                 if b.rect.colliderect(cur_tube.rect1) or b.rect.colliderect(cur_tube.rect2) or b.y<0 or b.y+30>668:
@@ -91,9 +124,9 @@ while True:
                 if cur_tube.count_pont():
                     b.score+=1
 
-            if cur_tube.check() and len(tubes_list): 
-                tubes_list.remove(cur_tube) # retirar tubos da lista quando saem do ecrã
-                
+        # Remove offscreen tubes
+        while len(tubes_list) and tubes_list[0].offscreen_check():
+            tubes_list.popleft()
                 
     
     else:

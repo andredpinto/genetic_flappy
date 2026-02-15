@@ -42,7 +42,7 @@ while True:
                     new_bird.jump()
 
         if event.type == pygame.USEREVENT and game_active:
-            tubes_list.append(tube(random.randrange(100, 501, 20), screen)) #colocar na lista um novo tubo a cada 3s
+            tubes_list.append(Tube(random.randrange(100, 501, 20), screen)) #colocar na lista um novo tubo a cada 3s
 
     screen.fill(blue)
     if game_active:
@@ -54,7 +54,7 @@ while True:
                 game_active= False
                 is_game_over= True
 
-            if cur_tube.check() and len(tubes_list):
+            if cur_tube.offscreen_check() and len(tubes_list):
                 tubes_list.remove(cur_tube)
             
             if cur_tube.count_pont():
