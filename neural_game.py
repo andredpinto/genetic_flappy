@@ -67,11 +67,15 @@ active_tubes = deque()  # Tubes in front of the bird
 
 def reset():
     # Game reset
-    global game_active, dead_birds
+    global game_active, dead_birds, gen_count
     game_active = True
     dead_birds=0
     tubes_list.clear()
     active_tubes.clear()
+
+    gen_count+=1
+    print (f"Generation number {gen_count}") # só para debug
+
     pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # reset timer, else first tube may generate out of place after reset
 
     for b in bird_lst:
@@ -83,6 +87,7 @@ def reset():
         b.score = 0
 
 pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
+gen_count = 0
 
 # GAME LOOP
 while True:
