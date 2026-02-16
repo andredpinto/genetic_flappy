@@ -12,7 +12,7 @@ game_font = pygame.font.Font(None, 40)
 
 # Screen init
 screen= pygame.display.set_mode((width, height))
-pygame.display.set_caption("Flappy gay")
+pygame.display.set_caption("Flappy Bird")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
 

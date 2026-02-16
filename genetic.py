@@ -49,21 +49,33 @@ def generate(bird_list : list, n_offspring : int) -> list:
     return offsp_list
 
 
-def create_generation(bird_scores : dict, gen_size, screen, bird_stamp)->tuple:
+def get_best(bird_scores: dict)->list:
+     # Returns best birds (number depends on elite_number)
+        leaderboard = sorted(bird_scores.items(), key=lambda x: x[1], reverse=True) # Sort birds by score (descending)
+
+        return [b[0] for b in leaderboard[:elite_number]]   # Get best birds
+
+
+def create_generation(bird_scores, gen_size, screen, bird_stamp)->tuple:
     # Receives bird scores dictionary {smartBird : score} and returns list of birds in new generation + bird stamp number
-        leaderboard = sorted(bird_scores.items(), key=lambda x: x[1], reverse=True)
+    if isinstance(bird_scores, dict):
+        new_gen = get_best(bird_scores) # Add parents (elite) to next generation
 
-        new_gen = [b[0] for b in leaderboard[:elite_number]] # Add parents (elite) to next generation
+    elif isinstance(bird_scores, list):
+        new_gen = bird_scores
 
-        elite = [b.getDNA() for b in new_gen]
+    else:
+        raise ValueError("bird_scores must be either a list or a dictionary")
 
-        for dna in generate(elite, gen_size-elite_number):
-             new_bird = smartBird(bird_x, 300, screen, bird_stamp, input_number)
-             bird_stamp += 1
-             new_bird.setDNA(dna)
-             new_gen.append(new_bird)
+    elite = [b.getDNA() for b in new_gen]
 
-        return new_gen, bird_stamp
+    for dna in generate(elite, gen_size-elite_number):
+            new_bird = smartBird(bird_x, 300, screen, bird_stamp, input_number)
+            bird_stamp += 1
+            new_bird.setDNA(dna)
+            new_gen.append(new_bird)
+
+    return new_gen, bird_stamp
 
 
 

@@ -11,7 +11,7 @@ class Bird:
         self.rect = pygame.Rect(x, y, 30, 30)
         self.number = number
         if number:
-            self.msg_surface = pygame.font.SysFont(None, 35).render(str(number) , True, (0,0,0))    # Escrever um número para identificar cada quadrado
+            self.msg_surface = pygame.font.SysFont(None, 20).render(str(number) , True, (0,0,0))    # Escrever um número para identificar cada quadrado
         self.score=0 # pontuação de cada pássaro
         self.alive= True
     

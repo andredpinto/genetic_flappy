@@ -29,3 +29,6 @@ input_number = 4    # Number of inputs for neural network
 generation_size = 100
 elite_number = 10    # Birds that pass to the next generation
 assert elite_number < generation_size
+
+# File to save neural network values to
+save_file = "apex.json"

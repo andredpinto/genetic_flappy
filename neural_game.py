@@ -3,6 +3,8 @@ import sys
 import numpy as np
 import random
 from collections import deque
+import json
+from pathlib import Path
 
 from globals import *
 from assets import *
@@ -15,30 +17,62 @@ game_font = pygame.font.Font(None, 40)
 
 # Screen init
 screen= pygame.display.set_mode((width, height))
-pygame.display.set_caption("Flappy gay")
+pygame.display.set_caption("Bird Uprising")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
-# Bird init
+# ======= BIRD INIT =======
 bird_stamp = 1     # Bird counter
+
 # This dictionary will associate the "smart" birds (bird class and corresponding neural network)
 # With their scores (frames they were alive), starting at 0
 birds_fitness = {}
-for i in range(generation_size):
-    birds_fitness[smartBird(bird_x, 300, screen, number=bird_stamp, input_size=input_number)] = 0
-    bird_stamp += 1
-bird_lst = birds_fitness.keys()
+
+# Loading save file, if it exists
+file_path = Path(save_file)
+
+if file_path.exists() and file_path.stat().st_size > 0: # Save file exists and is not empty
+    with open(save_file, "r") as f:
+        data = json.load(f)
+
+    n_birds = len(data)
+
+    saved_birds = []
+    for b in data:
+        new_bird = smartBird(bird_x, 300, screen, bird_stamp, input_number)
+        bird_stamp += 1
+        new_bird.setDNA(np.array(b))
+        saved_birds.append(new_bird)
+
+    if n_birds < generation_size:
+        bird_lst, bird_stamp = create_generation(saved_birds, generation_size, screen, bird_stamp)
+    else:
+        bird_lst = saved_birds[:generation_size]
+        bird_stamp += generation_size
+
+    birds_fitness = {b : 0 for b in bird_lst}
+
+    
+
+# If no save file is present, randomly create birds
+else:
+    for i in range(generation_size):
+        birds_fitness[smartBird(bird_x, 300, screen, number=bird_stamp, input_size=input_number)] = 0
+        bird_stamp += 1
+
+    bird_lst = birds_fitness.keys()
+# =========================
 
 tubes_list = deque()    # Tubes on screen
 active_tubes = deque()  # Tubes in front of the bird
 
 def reset():
     # Game reset
-    global game_active, dead_birds, game_start, step
+    global game_active, dead_birds
     game_active = True
     dead_birds=0
     tubes_list.clear()
     active_tubes.clear()
-    pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
+    pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # reset timer, else first tube may generate out of place after reset
 
     for b in bird_lst:
         b.jump()    # Initial jump
@@ -47,7 +81,6 @@ def reset():
         b.vel = 0
         b.alive = True
         b.score = 0
-        step = 0
 
 pygame.time.set_timer(pygame.USEREVENT, tube_frequency)     # Timer for tube creation
 
@@ -144,8 +177,15 @@ while True:
         msg_rect = msg_surface.get_rect(center=(width/2, height/2))
         screen.blit(msg_surface, msg_rect)
 
-        # GENERATION PASS LOGIC
+
         if is_game_over:
+            # Saving best birds
+            best = get_best(birds_fitness)
+            save = [b.getDNA().tolist() for b in best]
+            with open(save_file, "w") as f:
+                json.dump(save, f, indent=4)
+
+            # Next Generation
             bird_lst, bird_stamp = create_generation(birds_fitness, generation_size, screen, bird_stamp)
             birds_fitness = {b : 0 for b in bird_lst}   # Reset scores
             reset()
@@ -154,8 +194,3 @@ while True:
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
-
-# fim do loop
-
-pygame.quit()
-sys.exit()
