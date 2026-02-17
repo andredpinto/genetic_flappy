@@ -115,21 +115,45 @@ while True:
 
     if game_active:
 
+        # Move Tubes
+        for tube in tubes_list:
+            tube.move()
+
         # Remove not-active tubes
         while len(active_tubes) and active_tubes[0].inactive_check():
             active_tubes.popleft()
 
+        # Check active tube
         if len(active_tubes):
             cur_tube = active_tubes[0]  # Set active tube (the one directly in front of the bird)
         else:
             cur_tube = Tube(height/2, screen, ghost=True)   # Temporary "ghost tube", roughly in the middle of the screen
-            # Needed for the start of the game, when no tubes are generated
+            # Needed for when or if there are no generated tubes (like in the beggining of the game)
 
         # ===== BIRD MOVEMENT ===== 
         for b in bird_lst:
             if not b.alive: continue
 
             birds_fitness[b] += 1
+
+            # Verify colision with active tube
+            if not cur_tube.ghost:
+                if b.rect.colliderect(cur_tube.rect1) or b.rect.colliderect(cur_tube.rect2) or b.y<0 or b.y+30>=floor_y:    # bird height is 30
+                    b.alive= False
+                    dead_birds+=1 # Incremento o núnero de pássaros que morreram
+                    
+                    if b.score>best_score:
+                        best_score=b.score # Verifico se conseguiram a melhor pontuação até agora (corresponde ao ultimo pássaro a morer)
+
+                    # Checks if game end conditions are met
+                    if optimize: end_cond = generation_size - dead_birds <= elite_number
+                    else: end_cond = dead_birds >= generation_size
+                    if end_cond:
+                        game_active= False
+                        is_game_over= True
+
+            if cur_tube.count_pont():
+                b.score+=1
 
             # NEURAL NETWORK DECISION
             sensors = np.array([
@@ -145,44 +169,12 @@ while True:
 
             b.move()
 
-        # Move Tubes
-        for tube in tubes_list:
-            tube.move()
-
-        # Verify colision 
-        if len(tubes_list):
-            # For each bird
-            for b in bird_lst:
-                if not b.alive: continue
-                if b.rect.colliderect(cur_tube.rect1) or b.rect.colliderect(cur_tube.rect2) or b.y<0 or b.y+30>668:
-                    b.alive= False
-                    dead_birds+=1 # Incremento o núnero de pássaros que morreram
-                   
-                    if b.score>best_score:
-                        best_score=b.score # Verifico se conseguiram a melhor pontuação até agora (corresponde ao ultimo pássaro a morer)
-
-                    if dead_birds==generation_size:    # Verificar se todos os pássaros já morreram
-                        game_active= False
-                        is_game_over= True
-
-                if cur_tube.count_pont():
-                    b.score+=1
-
         # Remove offscreen tubes
         while len(tubes_list) and tubes_list[0].offscreen_check():
             tubes_list.popleft()
                 
     
     else:
-        for b in bird_lst:
-            b.rect = pygame.Rect(b.x-13, b.y, 30, 30)
-            pygame.draw.rect(screen, (255, 100, 0), b.rect)
-            b.screen.blit(b.msg_surface, b.msg_surface.get_rect(center=(b.x+1, b.y+12)))
-        msg_surface = game_font.render("Press 'S' to start", True, (255, 255, 255)) #mensagem com indicação para iniciar o jogo
-        msg_rect = msg_surface.get_rect(center=(width/2, height/2))
-        screen.blit(msg_surface, msg_rect)
-
-
         if is_game_over:
             # Saving best birds
             best = get_best(birds_fitness)
@@ -194,6 +186,17 @@ while True:
             bird_lst, bird_stamp = create_generation(birds_fitness, generation_size, screen, bird_stamp)
             birds_fitness = {b : 0 for b in bird_lst}   # Reset scores
             reset()
+
+        # Not game over and not game active means its game start
+        else:
+            for b in bird_lst:
+                b.rect = pygame.Rect(b.x-13, b.y, 30, 30)
+                pygame.draw.rect(screen, (255, 100, 0), b.rect)
+                b.screen.blit(b.msg_surface, b.msg_surface.get_rect(center=(b.x+1, b.y+12)))
+            msg_surface = game_font.render("Press 'S' to start", True, (255, 255, 255))     # Message displayed on screen
+            msg_rect = msg_surface.get_rect(center=(width/2, height/2))
+            screen.blit(msg_surface, msg_rect)
+
 
     floor(screen)
 

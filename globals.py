@@ -29,6 +29,7 @@ input_number = 4    # Number of inputs for neural network
 generation_size = 100
 elite_number = 10    # Birds that pass to the next generation
 assert elite_number < generation_size
+optimize = True    # If set to true, game will reset when number of alive birds is equal to elite number, saving time during training
 
 # File to save neural network values to
 save_file = "apex.json"
