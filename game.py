@@ -12,11 +12,11 @@ game_font = pygame.font.Font(None, 40)
 
 # Screen init
 screen= pygame.display.set_mode((width, height))
-pygame.display.set_caption("Flappy gay")
+pygame.display.set_caption("Flappy Bird")
 pygame.draw.rect(screen, (255, 255, 0), pygame.Rect(400, 400, 30, 30))
 
 
-new_bird= bird(300,300,screen)
+new_bird= Bird(300,300,screen, 10)
 tubes_list=[] #lista de tubos com tamanhos aleatórios
 
 pygame.time.set_timer(pygame.USEREVENT, tube_frequency) #frequencia com que cria tubos (3s)
@@ -42,7 +42,7 @@ while True:
                     new_bird.jump()
 
         if event.type == pygame.USEREVENT and game_active:
-            tubes_list.append(tube(random.randrange(100, 501, 20), screen)) #colocar na lista um novo tubo a cada 3s
+            tubes_list.append(Tube(random.randrange(100, 501, 20), screen)) #colocar na lista um novo tubo a cada 3s
 
     screen.fill(blue)
     if game_active:
@@ -54,7 +54,7 @@ while True:
                 game_active= False
                 is_game_over= True
 
-            if cur_tube.check() and len(tubes_list):
+            if cur_tube.offscreen_check() and len(tubes_list):
                 tubes_list.remove(cur_tube)
             
             if cur_tube.count_pont():
@@ -68,6 +68,11 @@ while True:
         if is_game_over: game_over(score, screen)
 
     floor(screen)
+
+    # ====== DEBUGGING ====== 
+    #if len(tubes_list) > 0 and game_active:
+    #    log_dist(new_bird, tubes_list[0])
+    # =======================
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
