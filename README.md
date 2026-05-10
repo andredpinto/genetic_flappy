@@ -1,6 +1,6 @@
 # Genetic Flappy Bird 🐦🧠
 
-An elegant, fully customizable clone of the classic Flappy Bird game built in Python using **Pygame**, featuring an autonomous AI training mode driven by a **Genetic Algorithm** and **Neural Networks** implemented entirely from scratch with **NumPy**.
+A customizable clone of the classic Flappy Bird game built in Python using **Pygame**, featuring an autonomous AI training mode driven by a **Genetic Algorithm** and **Neural Networks** implemented from scratch with **NumPy**.
 
 ---
 
@@ -8,13 +8,13 @@ An elegant, fully customizable clone of the classic Flappy Bird game built in Py
 
 This repository demonstrates the power of evolutionary algorithms and neural networks by applying them to a real-time game environment. It includes two primary modes of operation:
 1. **Human Playable Mode (`game.py`)**: Play the classic Flappy Bird game manually.
-2. **Autonomous AI Mode (`neural_game.py`)**: Watch a population of AI agents (birds) simultaneously attempt to navigate obstacles. Through natural selection, mutation, and crossover, the population evolves across generations to achieve superhuman performance.
+2. **Autonomous AI Mode (`neural_game.py`)**: Watch a population of AI agents (birds) simultaneously attempt to navigate obstacles. Through natural selection, mutation, and crossover, the population evolves across generations to achieve optimal performance.
 
 ---
 
 ## 🧠 AI & Genetic Algorithm Architecture
 
-Instead of relying on heavy machine learning libraries like TensorFlow or PyTorch, the neural network and genetic operators are built from the ground up using vectorized **NumPy** operations for maximum efficiency and readability.
+The neural network and genetic operators are built from the ground up using vectorized **NumPy** operations for maximum efficiency and readability.
 
 ### Neural Network (`neural_network.py`)
 Each bird is controlled by a simple Multi-Layer Perceptron (MLP) acting as a binary classifier:
