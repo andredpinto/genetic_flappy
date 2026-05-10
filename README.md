@@ -51,7 +51,6 @@ Evolution occurs across distinct generations of 100 birds (`generation_size`):
 ## ⚙️ Setup & Installation Guide
 
 ### Requirements
-As specified in the original repository configuration:
 * **Python**: `3.13.9`
 * **Pygame**: `2.6.1`
 * **NumPy**
@@ -59,22 +58,22 @@ As specified in the original repository configuration:
 ### Installation Steps
 
 1. **Clone the Repository**:
-   [TRIPLE-BACKTICK]bash
+   ```bash
    git clone https://github.com/andredpinto/genetic_flappy.git
    cd genetic_flappy
-   [TRIPLE-BACKTICK]
+   ```
 
 2. **Create a Virtual Environment (Optional but Recommended)**:
-   [TRIPLE-BACKTICK]bash
+   ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows use: venv\Scripts\activate
-   [TRIPLE-BACKTICK]
+   ```
 
 3. **Install Dependencies**:
    Install the necessary packages using the provided `requirements.txt`:
-   [TRIPLE-BACKTICK]bash
+   ```bash
    pip install -r requirements.txt
-   [TRIPLE-BACKTICK]
+   ```
 
 ---
 
@@ -82,17 +81,17 @@ As specified in the original repository configuration:
 
 ### Playing as a Human
 Run the standard game mode:
-[TRIPLE-BACKTICK]bash
+```bash
 python game.py
-[TRIPLE-BACKTICK]
+```
 * **Start / Restart**: Press **`S`** or **`R`**.
 * **Jump**: Press the **`SPACEBAR`**.
 
 ### Running the AI Evolution Simulation
 Launch the genetic algorithm training dashboard:
-[TRIPLE-BACKTICK]bash
+```bash
 python neural_game.py
-[TRIPLE-BACKTICK]
+```
 * **Start Simulation**: Press **`S`** to initialize the generation.
 * **Manual Reset**: Press **`R`** to instantly force a reset and proceed to the next generation.
 * **Watch Evolution**: Watch 100 agents play concurrently. As agents collide with obstacles, they are eliminated. Once all 100 agents fail, the system prints the generation count, saves the top performers to `apex.json`, and spawns an evolved batch.
@@ -106,9 +105,3 @@ You can easily tweak the AI parameters and game mechanics by editing `globals.py
 * `tube_frequency`: Milliseconds between spawning new obstacles.
 * `generation_size`: Total number of birds per generation (default: `100`).
 * `elite_number`: Number of top birds preserved per generation (default: `10`).
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**. **MIT License**.
